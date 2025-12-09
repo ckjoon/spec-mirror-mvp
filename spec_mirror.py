@@ -7,7 +7,7 @@ from google.genai import types
 
 # 2025 Standard: 최신 SDK는 모델명 앞에 'models/'를 붙이지 않아도 되지만, 
 # 명시적으로 gemini-1.5-pro 혹은 gemini-2.0-flash-exp 사용 권장
-MODEL_NAME = "gemini-3-pro-preview"
+MODEL_NAME = "gemini-2.5-flash-live"
 
 def main():
     # 1. Init & Auth
