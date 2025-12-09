@@ -1,0 +1,45 @@
+name: Spec Mirror (Gemini Edition)
+
+on:
+  pull_request:
+    types: [closed] # PR이 닫힐 때 실행 (Merge 포함)
+
+jobs:
+  sync:
+    # Merge 되었고 + 마일스톤이 설정되어 있을 때만 실행
+    if: github.event.pull_request.merged == true && github.event.pull_request.milestone != null
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # 전체 히스토리 가져오기 (Diff 생성용)
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: pip install notion-client google-generativeai
+
+      - name: Get Code Diff
+        # Gemini의 큰 Context Window를 믿고 10만 자까지 읽어들임
+        run: |
+          git diff origin/${{ github.base_ref }}...origin/${{ github.head_ref }} > diff.txt
+          echo "DIFF_CONTENT<<EOF" >> $GITHUB_ENV
+          head -c 100000 diff.txt >> $GITHUB_ENV 
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Run Spec Mirror Bot
+        env:
+          NOTION_KEY: ${{ secrets.NOTION_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          PR_MILESTONE_DESC: ${{ github.event.pull_request.milestone.description }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_DIFF: ${{ env.DIFF_CONTENT }}
+        run: python spec_mirror.py
