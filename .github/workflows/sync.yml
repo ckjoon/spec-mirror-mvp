@@ -1,4 +1,4 @@
-name: Spec Mirror (AI Edition)
+name: Spec Mirror (Deep Link Edition)
 
 on:
   pull_request:
@@ -16,7 +16,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # 전체 히스토리 필수
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -27,7 +27,7 @@ jobs:
         run: pip install -U notion-client google-genai
 
       - name: Extract Diff to File
-        # [Fix] 브랜치 이름 대신 SHA를 직접 비교하여 "PR 내용 그 자체"를 추출
+        # SHA 기반의 정확한 Diff 추출
         run: |
           git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > diff_context.txt
           echo "Diff size: $(wc -c < diff_context.txt) bytes"
@@ -39,5 +39,9 @@ jobs:
           PR_MILESTONE_DESC: ${{ github.event.pull_request.milestone.description }}
           PR_URL: ${{ github.event.pull_request.html_url }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          # [New] 딥링킹(Line Permalink) 생성을 위해 커밋 해시 전달
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          # [New] 리포지토리 이름 (예: owner/repo) 전달
+          GITHUB_REPOSITORY: ${{ github.repository }}
           DIFF_FILE_PATH: "diff_context.txt"
         run: python spec_mirror.py
