@@ -174,12 +174,13 @@ def main():
             update_payload = {
                 "rich_text": [
                     {"type": "text", "text": {"content": original_text}},
-                    # [UI] 줄바꿈 + 📄 파일명:라인 + 요약
                     {
                         "type": "text", 
-                        "text": {"content": f"\n   ↳ 📄 {file_path}:{line_range} - {summary}"}, 
-                        "annotations": {"code": True, "color": "gray"},
-                        "link": {"url": deep_link} # 여기에 딥링크 주입
+                        "text": {
+                            "content": f"\n   ↳ 📄 {file_path}:{line_range} - {summary}",
+                            "link": {"url": deep_link} # [Fix] 여기가 올바른 위치입니다.
+                        }, 
+                        "annotations": {"code": True, "color": "gray"}
                     }
                 ]
             }
