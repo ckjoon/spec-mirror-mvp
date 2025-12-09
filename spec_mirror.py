@@ -6,7 +6,7 @@ from google import genai
 from google.genai import types
 
 # [Config] Free Tier King
-MODEL_NAME = "gemini-1.5-flash-001" # -001 명시 (안전)
+MODEL_NAME = "gemini-2.5-flash" # -001 명시 (안전)
 
 def main():
     # 1. Init & Auth
