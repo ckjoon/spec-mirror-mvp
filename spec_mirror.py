@@ -24,7 +24,7 @@ def main():
 
     notion = Client(auth=notion_key)
     # [Fix] API Version v1 강제
-    client = genai.Client(api_key=google_key)
+    client = genai.Client(api_key=google_key, http_options={'api_version': 'v1beta'})
 
     # 2. Context Loading
     milestone_desc = os.environ.get("PR_MILESTONE_DESC", "")
