@@ -6,7 +6,7 @@ from notion_client import Client
 
 # --- 설정 ---
 # 2025 Context: Gemini 3.0 Pro (Real-world fallback: gemini-1.5-pro)
-MODEL_NAME = "gemini-3.0-pro" 
+MODEL_NAME = "gemini-3.0-pro-preview" 
 
 def main():
     # 1. 환경변수 로드
