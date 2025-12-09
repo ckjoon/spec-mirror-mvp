@@ -16,7 +16,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # 전체 히스토리 필수
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -24,12 +24,12 @@ jobs:
           python-version: '3.11'
 
       - name: Install Dependencies
-        # [Critical] 최신 Unified SDK 설치
         run: pip install -U notion-client google-genai
 
       - name: Extract Diff to File
+        # [Fix] 브랜치 이름 대신 SHA를 직접 비교하여 "PR 내용 그 자체"를 추출
         run: |
-          git diff origin/${{ github.base_ref }}...origin/${{ github.head_ref }} > diff_context.txt
+          git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > diff_context.txt
           echo "Diff size: $(wc -c < diff_context.txt) bytes"
 
       - name: Run Spec Mirror Bot
